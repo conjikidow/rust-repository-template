@@ -47,3 +47,28 @@ cargo new --vcs none crates/<package-name>
 ```
 
 For a library crate, add `--lib`.
+
+## Release Management Setup
+
+To set up release management using `release-plz` and `dist`, follow these steps:
+
+- Common setup
+  1. Set `release = true` in the `[workspace]` section of `.release-plz.toml` to enable releases.
+
+- If you ship binaries (use `dist`)
+  1. Install `dist` and let it create the Release on tags and attach assets.
+
+     ```bash
+     cargo binstall cargo-dist
+     dist init --yes
+     ```
+
+- If you do not ship binaries (library only)
+  1. Let `release-plz` create the GitHub Release by setting `git_release_enable = true`.
+
+### Trusted publishing (crates.io OIDC)
+
+Enable trusted publishing on crates.io.
+New crates cannot be published via OIDC the first time—run the first `cargo publish` manually.
+
+For more details, see [release-plz](https://github.com/release-plz/release-plz).
