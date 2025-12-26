@@ -39,7 +39,7 @@ jobs:
             rust:
               - '**/*.rs'
               - '**/Cargo.toml'
-              - '**/Cargo.lock'
+              - 'Cargo.lock'
 
   lint-gh-actions:
     name: Lint GitHub Actions
