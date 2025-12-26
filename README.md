@@ -32,10 +32,18 @@ license = "MIT OR Apache-2.0"  # Replace with your license
 repository = "https://github.com/conjikidow/repo"  # Replace with your repository URL
 ```
 
+Add packages to the workspace by:
+
+```bash
+cargo new --vcs none crates/<package-name>
+```
+
+For a library crate, add `--lib`.
+
 ## Pre-commit Hooks Setup
 
 To enable pre-commit hooks in your repository, you need to install `pre-commit` by running the following command:
 
-```console
+```bash
 uvx pre-commit install
 ```
