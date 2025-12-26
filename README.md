@@ -32,6 +32,9 @@ Replace `project-name` with your project name in the following files:
   edition = "2024"
   description = "Add your description here"
   readme = "README.md"
+  license = "MIT OR Apache-2.0"  # Replace with your license
+  repository = "https://github.com/conjikidow/repo"  # Replace with your repository URL
+  publish = false
   ```
 
 - `.bumpversion.toml`
