@@ -27,7 +27,7 @@ jobs:
           toolchain: stable
 
       - name: Generate GitHub token
-        uses: actions/create-github-app-token@v2.2.1
+        uses: actions/create-github-app-token@29824e69f54612133e76f7eaac726eef6c875baf # v2.2.1
         id: generate-token
         with:
           app-id: ${{ secrets.APP_ID }}
@@ -62,7 +62,7 @@ jobs:
           toolchain: stable
 
       - name: Generate GitHub token
-        uses: actions/create-github-app-token@v2.2.1
+        uses: actions/create-github-app-token@29824e69f54612133e76f7eaac726eef6c875baf # v2.2.1
         id: generate-token
         with:
           app-id: ${{ secrets.APP_ID }}
