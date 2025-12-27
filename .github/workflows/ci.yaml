@@ -71,7 +71,7 @@ jobs:
         id: list-workflows
         run: |
           {
-            echo "inputs<<'EOF'"
+            echo "inputs<<EOF"
             find .github/workflows -maxdepth 1 -type f \( -name '*.yml' -o -name '*.yaml' \) \
               ! -name 'release.yaml'
             echo "EOF"
