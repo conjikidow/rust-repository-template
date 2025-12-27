@@ -66,7 +66,7 @@ To set up release management using `release-plz` and `dist`, follow these steps:
      ```
 
 - Library-only publishing
-  1. Remove `dist-workspace.toml` and `.github/workflows/release.yaml`, and delete the `[profile.dist]` section from `Cargo.toml`.
+  1. Remove `dist-workspace.toml` and `.github/workflows/release.yml`, and delete the `[profile.dist]` section from `Cargo.toml`.
   2. Let `release-plz` create the GitHub Release by setting `git_release_enable = true`.
 
 For more details, see [release-plz](https://release-plz.ieni.dev/docs) and [dist](https://axodotdev.github.io/cargo-dist/book).
