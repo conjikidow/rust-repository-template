@@ -7,6 +7,12 @@ repos:
       - id: typos
         args: ["--force-exclude"]
 
+  - repo: https://github.com/adrienverge/yamllint.git
+    rev: v1.38.0
+    hooks:
+      - id: yamllint
+        args: ["--strict", "-c=.yamllint.yaml"]
+
   - repo: local
     hooks:
       - id: cargo-fmt
@@ -18,7 +24,8 @@ repos:
         stages: [pre-commit]
       - id: cargo-clippy
         name: cargo clippy
-        entry: cargo clippy --workspace --all-targets --all-features -- -D warnings
+        entry: >-
+          cargo clippy --workspace --all-targets --all-features -- -D warnings
         language: system
         types: [rust]
         pass_filenames: false
