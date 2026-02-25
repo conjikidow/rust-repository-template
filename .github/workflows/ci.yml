@@ -143,7 +143,23 @@ jobs:
         uses: actions-rust-lang/setup-rust-toolchain@1780873c7b576612439a134613cc4cc74ce5538c # v1.15.2
 
       - name: Run Rustfmt check
+        if: github.event_name != 'pull_request'
         run: cargo fmt --all -- --check
+
+      - name: Run Rustfmt
+        if: github.event_name == 'pull_request'
+        run: cargo fmt --all
+
+      - name: Suggest Rustfmt changes (reviewdog)
+        if: github.event_name == 'pull_request'
+        uses: reviewdog/action-suggester@aa38384ceb608d00f84b4690cacc83a5aba307ff # v1.24.0
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          tool_name: rustfmt
+
+      - name: Check Rustfmt diff
+        if: github.event_name == 'pull_request'
+        run: git diff --exit-code
 
       - name: Run Clippy
         if: github.event_name != 'pull_request'
