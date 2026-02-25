@@ -128,6 +128,10 @@ jobs:
     needs: determine-changes
     if: ${{ needs.determine-changes.outputs.rust == 'true' || needs.determine-changes.outputs.workflow_ci == 'true' }}
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      checks: write
+      pull-requests: write
 
     steps:
       - name: Checkout the main repository
@@ -142,7 +146,45 @@ jobs:
         run: cargo fmt --all -- --check
 
       - name: Run Clippy
+        if: github.event_name != 'pull_request'
         run: cargo clippy --workspace --all-targets --all-features
+
+      - name: Set up reviewdog
+        uses: reviewdog/action-setup@d8a7baabd7f3e8544ee4dbde3ee41d0011c3a93f # v1.5.0
+        if: github.event_name == 'pull_request'
+
+      - name: Run Clippy (reviewdog)
+        if: github.event_name == 'pull_request'
+        run: |
+          cargo clippy --workspace --all-targets --all-features --message-format=json > /tmp/clippy-report.json || true
+          jq -c '
+            select(.reason == "compiler-message") |
+            .message as $m |
+            select($m.level == "warning" or $m.level == "error") |
+            ($m.spans // [])[] |
+            select(.is_primary == true) |
+            {
+              source: {name: "clippy"},
+              severity: (if $m.level == "error" then "ERROR" else "WARNING" end),
+              message: ($m.message + (if $m.code and $m.code.code then " (" + $m.code.code + ")" else "" end)),
+              location: {
+                path: .file_name,
+                range: {
+                  start: {line: .line_start, column: .column_start},
+                  end: {line: .line_end, column: .column_end}
+                }
+              }
+            }
+          ' /tmp/clippy-report.json |
+            reviewdog \
+              -f=rdjsonl \
+              -name=clippy \
+              -reporter=github-pr-review \
+              -filter-mode=added \
+              -fail-level=error \
+              -tee
+        env:
+          REVIEWDOG_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   test-rust:
     name: Test Rust
