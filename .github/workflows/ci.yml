@@ -277,8 +277,7 @@ jobs:
               }
             }
           ' /tmp/clippy-report.json > /tmp/clippy-rdjsonl.txt || true
-          cat /tmp/clippy-rdjsonl.txt |
-            reviewdog \
+          reviewdog < /tmp/clippy-rdjsonl.txt \
               -f=rdjsonl \
               -name=clippy \
               -reporter=github-pr-review \
