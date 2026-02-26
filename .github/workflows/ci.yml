@@ -16,10 +16,10 @@ jobs:
     name: Determine changed files
     runs-on: ubuntu-latest
     outputs:
-      doc: ${{ steps.changed-files.outputs.doc_any_changed }}
-      yaml: ${{ steps.changed-files.outputs.yaml_any_changed }}
       workflow: ${{ steps.changed-files.outputs.workflow_any_changed }}
       workflow_ci: ${{ steps.changed-files.outputs.workflow_ci_any_changed }}
+      md: ${{ steps.changed-files.outputs.md_any_changed }}
+      yaml: ${{ steps.changed-files.outputs.yaml_any_changed }}
       rust: ${{ steps.changed-files.outputs.rust_any_changed }}
 
     steps:
@@ -34,16 +34,17 @@ jobs:
         uses: tj-actions/changed-files@7dee1b0c1557f278e5c7dc244927139d78c0e22a # v47.0.4
         with:
           files_yaml: |
-            doc:
-              - '**/*.md'
-              - '**/docs/**'
-            yaml:
-              - '**/*.yml'
-              - '**/*.yaml'
             workflow:
               - .github/workflows/**
             workflow_ci:
               - .github/workflows/ci.yml
+            md:
+              - '**/*.md'
+              - .markdownlint-cli2.yaml
+            yaml:
+              - '**/*.yml'
+              - '**/*.yaml'
+              - .yamllint.yaml
             rust:
               - '**/*.rs'
               - '**/Cargo.toml'
@@ -95,6 +96,51 @@ jobs:
           inputs: ${{ steps.list-workflows.outputs.inputs }}
           # advanced-security: false  # must be false for private repo
 
+  lint-markdown:
+    name: Lint Markdown
+    needs: determine-changes
+    if: ${{ needs.determine-changes.outputs.md == 'true' || needs.determine-changes.outputs.workflow_ci == 'true' }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+
+    steps:
+      - name: Checkout the main repository
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
+
+      - name: Lint Markdown
+        if: github.event_name != 'pull_request'
+        run: npx --yes markdownlint-cli2 .
+
+      - name: Set up reviewdog
+        if: github.event_name == 'pull_request'
+        uses: reviewdog/action-setup@d8a7baabd7f3e8544ee4dbde3ee41d0011c3a93f # v1.5.0
+
+      - name: Lint Markdown (reviewdog)
+        if: github.event_name == 'pull_request'
+        run: |
+          markdownlint_rc=0
+          npx --yes markdownlint-cli2 . > /tmp/markdownlint-report.txt 2>&1 || markdownlint_rc=$?
+          reviewdog_rc=0
+          cat /tmp/markdownlint-report.txt |
+            reviewdog \
+              -efm="%f:%l:%c %m" \
+              -efm="%f:%l %m" \
+              -name=markdownlint \
+              -reporter=github-pr-review \
+              -filter-mode=added \
+              -fail-level=error || reviewdog_rc=$?
+          if [ $markdownlint_rc -ne 0 ] && ! grep -Eq '^[^:]+:[0-9]+(:[0-9]+)? ' /tmp/markdownlint-report.txt; then
+            echo "::error title=markdownlint::markdownlint failed before producing parseable diagnostics"
+            exit $markdownlint_rc
+          fi
+          exit $reviewdog_rc
+        env:
+          REVIEWDOG_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
   lint-yaml:
     name: Lint YAML
     needs: determine-changes
@@ -126,44 +172,6 @@ jobs:
           reporter: github-pr-review
           fail_level: error
           yamllint_flags: .
-
-  lint-markdown:
-    name: Lint Markdown
-    needs: determine-changes
-    if: ${{ needs.determine-changes.outputs.doc == 'true' || needs.determine-changes.outputs.workflow_ci == 'true' }}
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      pull-requests: write
-
-    steps:
-      - name: Checkout the main repository
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
-        with:
-          persist-credentials: false
-
-      - name: Lint Markdown
-        if: github.event_name != 'pull_request'
-        run: npx --yes markdownlint-cli2 .
-
-      - name: Set up reviewdog
-        if: github.event_name == 'pull_request'
-        uses: reviewdog/action-setup@d8a7baabd7f3e8544ee4dbde3ee41d0011c3a93f # v1.5.0
-
-      - name: Lint Markdown (reviewdog)
-        if: github.event_name == 'pull_request'
-        run: |
-          npx --yes markdownlint-cli2 . > /tmp/markdownlint-report.txt 2>&1 || true
-          cat /tmp/markdownlint-report.txt |
-            reviewdog \
-              -efm="%f:%l:%c %m" \
-              -efm="%f:%l %m" \
-              -name=markdownlint \
-              -reporter=github-pr-review \
-              -filter-mode=added \
-              -fail-level=error
-        env:
-          REVIEWDOG_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   check-prek:
     name: Check prek
@@ -247,7 +255,10 @@ jobs:
       - name: Run Clippy (reviewdog)
         if: github.event_name == 'pull_request'
         run: |
-          cargo clippy --workspace --all-targets --all-features --message-format=json > /tmp/clippy-report.json || true
+          clippy_rc=0
+          cargo clippy --workspace --all-targets --all-features --message-format=json \
+            > /tmp/clippy-report.json || clippy_rc=$?
+          reviewdog_rc=0
           jq -c '
             select(.reason == "compiler-message") |
             .message as $m |
@@ -266,14 +277,20 @@ jobs:
                 }
               }
             }
-          ' /tmp/clippy-report.json |
+          ' /tmp/clippy-report.json > /tmp/clippy-rdjsonl.txt || true
+          cat /tmp/clippy-rdjsonl.txt |
             reviewdog \
               -f=rdjsonl \
               -name=clippy \
               -reporter=github-pr-review \
               -filter-mode=added \
               -fail-level=error \
-              -tee
+              -tee || reviewdog_rc=$?
+          if [ $clippy_rc -ne 0 ] && [ ! -s /tmp/clippy-rdjsonl.txt ]; then
+            echo "::error title=clippy::clippy failed before producing diagnostics for reviewdog"
+            exit $clippy_rc
+          fi
+          exit $reviewdog_rc
         env:
           REVIEWDOG_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
