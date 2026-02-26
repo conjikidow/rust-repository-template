@@ -1,0 +1,12 @@
+include = ["**/*.toml"]
+
+[formatting]
+array_auto_collapse = false
+column_width = 120
+indent_string = "    "
+
+[[rule]]
+include = ["dist-workspace.toml"]
+
+[rule.formatting]
+align_comments = false
