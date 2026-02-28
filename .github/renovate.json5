@@ -7,6 +7,21 @@
   customManagers: [
     {
       customType: 'regex',
+      description: 'Update cargo-dist-version in dist-workspace.toml',
+      managerFilePatterns: [
+        '/^dist-workspace\\.toml$/',
+      ],
+      matchStrings: [
+        'cargo-dist-version\\s*=\\s*"(?<currentValue>[^"\\s]+)"',
+      ],
+      datasourceTemplate: 'github-releases',
+      depNameTemplate: 'axodotdev/cargo-dist',
+      versioningTemplate: 'semver',
+      extractVersionTemplate: '^v(?<version>.+)$',
+      autoReplaceStringTemplate: 'cargo-dist-version = "{{{newValue}}}"',
+    },
+    {
+      customType: 'regex',
       description: 'Update pinned GitHub Actions commits in dist-workspace.toml',
       managerFilePatterns: [
         '/^dist-workspace\\.toml$/',
