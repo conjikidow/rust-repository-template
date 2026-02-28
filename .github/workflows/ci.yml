@@ -50,9 +50,11 @@ jobs:
               - '**/*.toml'
               - .taplo.toml
             rust:
+              - 'rust-toolchain.toml'
               - '**/*.rs'
               - '**/Cargo.toml'
               - 'Cargo.lock'
+              - '.rustfmt.toml'
 
   lint-gh-actions:
     name: Lint GitHub Actions
