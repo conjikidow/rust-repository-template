@@ -65,6 +65,6 @@ jobs:
 
       - name: Push back to PR branch
         if: steps.diff.outputs.changed == 'true'
-        run: git push origin "HEAD:${PR_BRANCH}"
         env:
           PR_BRANCH: ${{ github.head_ref }}
+        run: git push origin "HEAD:${PR_BRANCH}"
