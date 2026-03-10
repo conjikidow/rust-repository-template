@@ -83,7 +83,7 @@
         '/^\\.github/workflows/ci\\.ya?ml$/',
       ],
       matchStrings: [
-        'go install github\\.com/rhysd/actionlint/cmd/actionlint@(?<currentValue>v\\S+)',
+        'github\\.com/rhysd/actionlint/cmd/actionlint@(?<currentValue>v\\S+)',
       ],
       datasourceTemplate: 'github-releases',
       depNameTemplate: 'rhysd/actionlint',
@@ -94,7 +94,7 @@
         '/^\\.github/workflows/ci\\.ya?ml$/',
       ],
       matchStrings: [
-        'npx --yes markdownlint-cli2@(?<currentValue>\\S+) \\.',
+        'markdownlint-cli2@(?<currentValue>\\S+)',
       ],
       datasourceTemplate: 'npm',
       depNameTemplate: 'markdownlint-cli2',
@@ -105,10 +105,10 @@
         '/^\\.github/workflows/ci\\.ya?ml$/',
       ],
       matchStrings: [
-        'uvx --from "yamllint==(?<currentValue>\\S+)" yamllint \\.',
+        'taplo-cli@(?<currentValue>\\S+)',
       ],
-      datasourceTemplate: 'pypi',
-      depNameTemplate: 'yamllint',
+      datasourceTemplate: 'crate',
+      depNameTemplate: 'taplo-cli',
     },
     {
       customType: 'regex',
@@ -116,10 +116,10 @@
         '/^\\.github/workflows/ci\\.ya?ml$/',
       ],
       matchStrings: [
-        'cargo install taplo-cli@(?<currentValue>\\S+) --locked',
+        'yamllint==(?<currentValue>[^"\\s]+)',
       ],
-      datasourceTemplate: 'crate',
-      depNameTemplate: 'taplo-cli',
+      datasourceTemplate: 'pypi',
+      depNameTemplate: 'yamllint',
     },
   ],
   ignorePaths: [
