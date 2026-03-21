@@ -133,7 +133,7 @@ jobs:
 
       - name: Validate Renovate config
         run: |
-          npx --yes --package renovate@43.74.0 \
+          npx --yes --package renovate@43.84.2 \
             renovate-config-validator .github/renovate.json5
 
   lint-markdown:
