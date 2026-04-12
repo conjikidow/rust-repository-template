@@ -1,0 +1,6 @@
+---
+rules:
+  secrets-outside-env:
+    config:
+      allow:
+        - GH_APP_PRIVATE_KEY
