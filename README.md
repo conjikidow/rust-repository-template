@@ -87,10 +87,10 @@ Create a minimal GitHub App:
 
 Install the App on the repository where you will run releases.
 
-Store the credentials as GitHub Actions secrets:
+Store the credentials as GitHub Actions variables and secrets:
 
-- `APP_ID`: the GitHub App ID
-- `APP_PRIVATE_KEY`: the private key content
+- `GH_APP_CLIENT_ID` (Actions variable): the GitHub App client ID
+- `GH_APP_PRIVATE_KEY` (Actions secret): the GitHub App private key (PEM content)
 
 You can find the secrets page at:
 `https://github.com/<owner>/<repo>/settings/secrets/actions`
