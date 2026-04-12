@@ -89,7 +89,7 @@ Install the App on the repository where you will run releases.
 
 Store the credentials as GitHub Actions secrets:
 
-- `APP_ID`: the GitHub App ID
+- `APP_CLIENT_ID`: the GitHub App client ID
 - `APP_PRIVATE_KEY`: the private key content
 
 You can find the secrets page at:
