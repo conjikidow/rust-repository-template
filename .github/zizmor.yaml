@@ -1,8 +1,6 @@
 ---
 rules:
   secrets-outside-env:
-    disable: true
-    # NOTE: The allowlist config below is supported in zizmor v1.24.0+.
-    # config:
-    #   allow:
-    #     - GH_APP_PRIVATE_KEY
+    config:
+      allow:
+        - GH_APP_PRIVATE_KEY
