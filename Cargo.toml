@@ -1,14 +1,14 @@
 [workspace]
-members = ["crates/*"]
 resolver = "3"
+members = ["crates/*"]
 
 [workspace.package]
 version = "0.1.0"
+authors = ["Your Name"]
 edition = "2024"
 readme = "README.md"
-license = "Apache-2.0 OR MIT"
 repository = "https://github.com/<owner>/<repo>"
-authors = ["Your Name"]
+license = "Apache-2.0 OR MIT"
 
 [workspace.dependencies]
 
