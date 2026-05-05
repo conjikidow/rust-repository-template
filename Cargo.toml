@@ -4,7 +4,6 @@ members = ["crates/*"]
 
 [workspace.package]
 version = "0.1.0"
-authors = ["Your Name"]
 edition = "2024"
 readme = "README.md"
 repository = "https://github.com/<owner>/<repo>"
