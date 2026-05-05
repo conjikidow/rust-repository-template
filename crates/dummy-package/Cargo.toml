@@ -1,11 +1,11 @@
 [package]
 name = "dummy-package"
-description = "A dummy package"
 version.workspace = true
-edition.workspace = true
-readme.workspace = true
-license.workspace = true
-repository.workspace = true
 authors.workspace = true
+edition.workspace = true
+description = "A dummy package"
+readme.workspace = true
+repository.workspace = true
+license.workspace = true
 
 [dependencies]
