@@ -1,7 +1,6 @@
 [package]
 name = "dummy-package"
 version.workspace = true
-authors.workspace = true
 edition.workspace = true
 description = "A dummy package"
 readme.workspace = true

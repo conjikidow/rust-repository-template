@@ -30,7 +30,6 @@ Update your workspace metadata in `Cargo.toml`:
 ```toml
 [workspace.package]
 version = "0.1.0"
-authors = ["Your Name"]  # Replace with your name
 edition = "2024"
 readme = "README.md"
 repository = "https://github.com/<owner>/<repo>"  # Replace with your repository URL
