@@ -108,7 +108,12 @@ jobs:
         with:
           version: 'v1.24.1'
           inputs: ${{ steps.list-workflows.outputs.inputs }}
-          # advanced-security: false  # must be false for private repo
+          advanced-security: >-
+            ${{
+              github.event.repository.private == false &&
+              (github.event_name != 'pull_request' ||
+              github.event.pull_request.head.repo.full_name == github.repository)
+            }}
 
   validate-renovate-config:
     name: Validate Renovate config
