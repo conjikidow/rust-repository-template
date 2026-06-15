@@ -364,6 +364,7 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           tool_name: rustfmt
+          cleanup: 'false'
 
       - name: Check Rustfmt diff
         if: github.event_name == 'pull_request'
