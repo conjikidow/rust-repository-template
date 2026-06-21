@@ -31,7 +31,7 @@
       ],
       datasourceTemplate: 'github-tags',
       versioningTemplate: 'semver',
-      autoReplaceStringTemplate: '"{{{depName}}}" = "{{{newDigest}}}" # {{{newValue}}}',
+      autoReplaceStringTemplate: '"{{{depName}}}" = "{{{newDigest}}}"  # {{{newValue}}}',
     },
     {
       customType: 'regex',
