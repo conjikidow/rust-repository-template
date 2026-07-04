@@ -6,6 +6,8 @@ on:
     paths:
       - dist-workspace.toml
 
+permissions: {}
+
 jobs:
 
   generate-workflow:
