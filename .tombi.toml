@@ -1,6 +1,2 @@
 [files]
 exclude = ["Cargo.lock"]
-
-[format]
-[format.rules]
-line-width = 120
