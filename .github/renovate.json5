@@ -221,6 +221,7 @@
     {
       matchFileNames: [
         '.github/workflows/**',
+        'dist-workspace.toml',
       ],
       matchUpdateTypes: [
         'patch',
